@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { AlertTriangle, Check, Send, ShieldAlert } from 'lucide-react';
+import { AlertTriangle, ArrowUpRight, Check, MessageCircle, Send, ShieldAlert } from 'lucide-react';
 import { siteConfig } from '@/lib/site-config';
 import { useHostedForm } from '@/lib/use-hosted-form';
 import { PageHead, useSeo } from '@/components/site';
@@ -100,6 +100,14 @@ export default function Contact() {
           </form>
         )}
         <aside className="space-y-6">
+          <div className="border border-goldsoft bg-panel p-6">
+            <p className="overline mb-3">Discord</p>
+            <h2 className="font-serif text-2xl text-parchment">Join the conversation.</h2>
+            <p className="mt-3 mb-5 text-sm text-dim leading-relaxed">Talk builds, ask questions or share feedback on the ESO Companion Discord.</p>
+            <a href="https://discord.gg/ty3zb6eZYz" target="_blank" rel="noopener noreferrer" className="btn-gold" data-testid="link-discord">
+              <MessageCircle size={17} aria-hidden="true" /> Join the Discord <ArrowUpRight size={15} aria-hidden="true" />
+            </a>
+          </div>
           <div className="border border-danger/40 p-6">
             <p className="flex items-center gap-2 text-danger font-medium"><ShieldAlert size={17} /> Never send these</p>
             <ul className="mt-4 space-y-2 text-sm text-dim list-[square] pl-5 marker:text-danger">
