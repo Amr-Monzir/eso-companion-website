@@ -1,0 +1,58 @@
+name: Publish website to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.26.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Detect standalone or workspace layout
+        id: layout
+        shell: bash
+        run: |
+          if [ -f artifacts/eso-website/website.config.json ]; then
+            echo "directory=artifacts/eso-website" >> "$GITHUB_OUTPUT"
+          else
+            echo "directory=." >> "$GITHUB_OUTPUT"
+          fi
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: Check types
+        run: pnpm --dir "${{ steps.layout.outputs.directory }}" run typecheck
+      - name: Build static website
+        run: pnpm --dir "${{ steps.layout.outputs.directory }}" run build:pages --base "${{ steps.pages.outputs.base_path }}/"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ steps.layout.outputs.directory }}/dist/public
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish
+        id: deployment
+        uses: actions/deploy-pages@v4
